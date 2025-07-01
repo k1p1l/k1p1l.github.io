@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title></title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap');
+
+    body {
+      margin: 0;
+      height: 100vh;
+      background: radial-gradient(ellipse at center, #0b1a2a 0%, #000 80%);
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #fff;
+    }
+
+    .card {
+      background: #121f2e;
+      border-radius: 24px;
+      padding: 40px 30px 60px;
+      width: 380px;
+      box-shadow: 0 0 50px 5px #0f56ff88;
+      text-align: center;
+      position: relative;
+      overflow: visible;
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: 1.3px;
+      user-select: none;
+    }
+
+    .countdown {
+      font-family: 'Orbitron', monospace;
+      font-size: 54px;
+      font-weight: 900;
+      margin-bottom: 30px;
+      user-select: none;
+      letter-spacing: 3px;
+      text-shadow: 0 0 8px #0f56ffbb;
+    }
+
+    .animation-container {
+      position: relative;
+      width: 320px;
+      height: 320px;
+      margin: 0 auto;
+    }
+
+    /* Звездный фон */
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0; left: 0;
+      background:
+              radial-gradient(2px 2px at 20% 30%, #fff, transparent),
+              radial-gradient(1.5px 1.5px at 40% 70%, #fff, transparent),
+              radial-gradient(1.8px 1.8px at 65% 50%, #fff, transparent),
+              radial-gradient(2.5px 2.5px at 80% 20%, #fff, transparent);
+      background-repeat: no-repeat;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Артем (земля) */
+    .earth {
+      position: absolute;
+      bottom: 25%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: url('image_artem.png') no-repeat center/cover;
+      box-shadow: 0 0 40px 20px rgba(30, 144, 255, 0.8);
+      border: 4px solid #1e90ff;
+      z-index: 10;
+    }
+
+    /* Обновлённые орбиты с увеличенным радиусом и линиями */
+    .orbit1, .orbit2, .orbit3 {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      border-radius: 50%;
+      transform-origin: center center;
+      animation-timing-function: linear;
+      pointer-events: none;
+      border: 1.5px solid rgba(255, 255, 255, 0.2); /* линия орбиты */
+      box-sizing: border-box;
+    }
+
+    /* Увеличенные радиусы */
+    .orbit1 {
+      width: 320px;
+      height: 320px;
+      margin-left: -160px;
+      margin-top: -160px;
+      animation-name: spin-clockwise;
+      animation-duration: 22s;
+      animation-iteration-count: infinite;
+    }
+
+    .orbit2 {
+      width: 260px;
+      height: 260px;
+      margin-left: -130px;
+      margin-top: -130px;
+      animation-name: spin-counterclockwise;
+      animation-duration: 30s;
+      animation-iteration-count: infinite;
+    }
+
+    .orbit3 {
+      width: 220px;
+      height: 220px;
+      margin-left: -110px;
+      margin-top: -110px;
+      animation-name: spin-clockwise;
+      animation-duration: 16s;
+      animation-iteration-count: infinite;
+    }
+
+    @keyframes spin-clockwise {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes spin-counterclockwise {
+      from { transform: rotate(360deg); }
+      to { transform: rotate(0deg); }
+    }
+
+    /* Внутри орбиты — иконка */
+    .planet {
+      position: absolute;
+      top: 50%;
+      left: 100%;
+      width: 50px;
+      height: 50px;
+      transform: translate(-50%, -50%);
+      background-size: contain;
+      background-repeat: no-repeat;
+      box-shadow: 0 0 15px 3px rgba(255, 255, 255, 0.7);
+    }
+
+    .planet.pelmeni {
+      background-image: url('venik_ban.png');
+    }
+    .planet.beer {
+      background-image: url('beer.png');
+    }
+    .planet.joystick {
+      background-image: url('joystick.png');
+    }
+
+    /* Каблук - комета */
+    .animation-container {
+      position: relative; /* контейнер для абсолютного позиционирования кометы */
+    }
+
+    .comet {
+      position: absolute; /* чтобы комета могла двигаться по контейнеру */
+      top: 20px;
+      left: -60px;
+      width: 60px;
+      height: 120px;
+      background: url('image_kabluk.png') no-repeat center/contain;
+      animation: cometMove linear forwards;
+      filter: drop-shadow(0 0 5px #ff69b4);
+      z-index: 10;
+    }
+
+    .comet::before {
+      content: '';
+      position: absolute; /* позиционируется относительно .comet */
+      top: 50%;
+      left: 100%;
+      width: 120px;
+      height: 50px;
+      background: radial-gradient(ellipse at left, rgba(255,105,180,0.8), transparent 70%);
+      filter: blur(20px);
+      transform: translateY(-50%);
+      animation: cometTrail linear forwards;
+      animation-duration: 10s; /* совпадает с cometMove */
+      z-index: -1;
+    }
+
+    @keyframes cometMove {
+      0% {
+        left: -60px;
+        top: 20px;
+        transform: rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        left: 50%;
+        top: 100px;
+        transform: translateX(-50%) rotate(45deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes cometTrail {
+      0% {
+        opacity: 0.8;
+        transform: translateX(0) translateY(-50%);
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(80px) translateY(-50%);
+      }
+    }
+
+    /* Эффект столкновения */
+    .collision {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,100,100,0.9), rgba(255,50,50,0.6));
+      box-shadow: 0 0 70px 25px rgba(255, 50, 50, 0.9);
+      animation: flash 1s ease-in-out 4;
+      pointer-events: none;
+      z-index: 30;
+    }
+
+    @keyframes flash {
+      0%, 100% {opacity: 0;}
+      50% {opacity: 1;}
+    }
+
+  </style>
+</head>
+<body>
+<div class="card">
+  <h2>Обратный отсчет</h2>
+  <div class="countdown" id="countdown">00:00:10</div>
+  <div class="animation-container">
+    <div class="stars"></div>
+
+    <div class="earth"></div>
+
+    <!-- Орбиты с "планетами" -->
+    <div class="orbit orbit1">
+      <div class="planet pelmeni"></div>
+    </div>
+    <div class="orbit orbit2">
+      <div class="planet beer"></div>
+    </div>
+    <div class="orbit orbit3">
+      <div class="planet joystick"></div>
+    </div>
+
+    <div class="comet" id="comet"></div>
+  </div>
+</div>
+
+<script>
+  let countdownSeconds = 10;
+  const countdownEl = document.getElementById('countdown');
+  const comet = document.getElementById('comet');
+  const animationDuration = 10; // секунд
+
+  comet.style.animationDuration = animationDuration + 's';
+  comet.style.setProperty('--trail-duration', animationDuration + 's');
+
+  function formatTime(seconds) {
+    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+    const s = (seconds % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  }
+
+  function updateCountdown() {
+    if (countdownSeconds >= 0) {
+      countdownEl.textContent = formatTime(countdownSeconds);
+      countdownSeconds--;
+    } else {
+      countdownEl.textContent = "СТОЛКНОВЕНИЕ!";
+      comet.style.display = 'none';
+
+      const card = document.querySelector('.card');
+      const collisionEffect = document.createElement('div');
+      collisionEffect.classList.add('collision');
+      card.appendChild(collisionEffect);
+
+      clearInterval(timerInterval);
+    }
+  }
+
+  updateCountdown();
+  const timerInterval = setInterval(updateCountdown, 1000);
+</script>
+</body>
+</html>
