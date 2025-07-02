@@ -168,21 +168,34 @@
       position: relative; /* контейнер для абсолютного позиционирования кометы */
     }
 
+    @keyframes spiral-move {
+      0% {
+        transform: rotate(0deg) translateX(180px);
+        opacity: 1;
+      }
+      100% {
+        transform: rotate(1440deg) translateX(0px);
+        opacity: 0.95;
+      }
+    }
+
     .comet {
-      position: absolute; /* чтобы комета могла двигаться по контейнеру */
-      top: 20px;
-      left: -60px;
       width: 60px;
       height: 120px;
       background: url('image_kabluk.png') no-repeat center/contain;
-      animation: cometMove linear forwards;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-origin: center center;
+      animation: spiral-move linear forwards;
       filter: drop-shadow(0 0 5px #ff69b4);
       z-index: 10;
+      animation-duration: 10s; /* JS заменит это динамически */
     }
 
     .comet::before {
       content: '';
-      position: absolute; /* позиционируется относительно .comet */
+      position: absolute;
       top: 50%;
       left: 100%;
       width: 120px;
@@ -191,9 +204,10 @@
       filter: blur(20px);
       transform: translateY(-50%);
       animation: cometTrail linear forwards;
-      animation-duration: 10s; /* совпадает с cometMove */
+      animation-duration: var(--trail-duration);
       z-index: -1;
     }
+
 
     @keyframes cometMove {
       0% {
@@ -267,28 +281,34 @@
     <div class="comet" id="comet"></div>
   </div>
 </div>
-
 <script>
-  let countdownSeconds = 10;
   const countdownEl = document.getElementById('countdown');
   const comet = document.getElementById('comet');
-  const animationDuration = 10; // секунд
+  const targetDate = new Date(2025, 6, 11, 18, 0, 0); // 11 июля 18:00
 
-  comet.style.animationDuration = animationDuration + 's';
-  comet.style.setProperty('--trail-duration', animationDuration + 's');
+  function formatTimeLeft(ms) {
+    if (ms <= 0) return "Потеряли пацана!";
 
-  function formatTime(seconds) {
-    const m = Math.floor(seconds / 60).toString().padStart(2, '0');
-    const s = (seconds % 60).toString().padStart(2, '0');
-    return `${m}:${s}`;
+    const totalSeconds = Math.floor(ms / 1000);
+    const d = Math.floor(totalSeconds / (3600 * 24));
+    const h = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+
+    if (d > 0) {
+      return `${d}д ${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    } else {
+      return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
   }
 
   function updateCountdown() {
-    if (countdownSeconds >= 0) {
-      countdownEl.textContent = formatTime(countdownSeconds);
-      countdownSeconds--;
-    } else {
-      countdownEl.textContent = "СТОЛКНОВЕНИЕ!";
+    const now = new Date();
+    const diff = targetDate - now;
+
+    countdownEl.textContent = formatTimeLeft(diff);
+
+    if (diff <= 0) {
       comet.style.display = 'none';
 
       const card = document.querySelector('.card');
@@ -300,8 +320,23 @@
     }
   }
 
+  function setupCometAnimation() {
+    const now = new Date();
+    const msRemaining = targetDate - now;
+
+    if (msRemaining > 0) {
+      const secondsRemaining = msRemaining / 1000;
+      comet.style.animationDuration = `${secondsRemaining}s`;
+      comet.style.setProperty('--trail-duration', `${secondsRemaining}s`);
+    } else {
+      comet.style.display = 'none';
+    }
+  }
+
+  setupCometAnimation();
   updateCountdown();
   const timerInterval = setInterval(updateCountdown, 1000);
 </script>
+
 </body>
 </html>
